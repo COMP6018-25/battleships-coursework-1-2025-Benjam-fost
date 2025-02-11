@@ -17,6 +17,7 @@ import java.util.Observable;
 public class BView implements Observer{
     
     private static final Dimension PANEL_SIZE = new Dimension (500,500);
+    private static final int GRID_SIZE = 11;
     
     private final BModel model;
     private final BController controller;
@@ -59,7 +60,7 @@ public class BView implements Observer{
     // Initialises the panel and adds content, to be added to the contentPanel of frame
     private void createPanel(){
         panel = new JPanel();
-        panel.setLayout(new GridLayout(11,11));
+        panel.setLayout(new GridLayout(GRID_SIZE,GRID_SIZE));
         
         /*
         Below dynamically adds the grid content
@@ -67,27 +68,22 @@ public class BView implements Observer{
         x = 0 and y = 0 at the top left-most cell
         */
         
-        // Adds the row numbers
-        for (int y = 0; y < 11; y++){
-            // Adds the empty cell at the top right
-            if (y == 0){
-                panel.add(new JLabel("◿"));
-            } else {
-                // Uses the row iteration as the row number, converted into string format
-                panel.add(new JLabel(String.valueOf(y)));
-            }
+        // Adds the empty cell at the top right
+        panel.add(new JLabel("◿"));
+        // Adds the column labels
+        for (int x = 1; x < GRID_SIZE; x++){
+            // Adds letter labels across the top of the grid
+            panel.add(new JLabel(Character.toString('A' + x - 1)));
         }
         
         // Fills the rest of the grid
-        for (int x = 1; x < 11; x++){
-            for (int y = 0; y < 11; y++){
-                if (y == 0){
-                    panel.add(new JLabel(Character.toString('A' + x - 1)));
-                } else {
-                    panel.add(createCellButton());
-                }
-                
-            }
+        for (int y = 1; y < GRID_SIZE; y++){
+            // Adds the number label
+            panel.add(new JLabel(String.valueOf(y)));
+            // Adds the button cells
+            for (int x = 1; x < GRID_SIZE; x++){
+                panel.add(createCellButton());
+            } 
         }
         
         // Sets the size of the content pane as this.pane will be the only child
