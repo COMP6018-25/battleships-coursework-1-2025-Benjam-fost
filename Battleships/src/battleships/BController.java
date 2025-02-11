@@ -28,5 +28,9 @@ class BController {
     public void init() {
         model.init();
     }
+
+    void handleCellClick(int x, int y) {
+        view.updateCell(x,y);
+    }
     
 }

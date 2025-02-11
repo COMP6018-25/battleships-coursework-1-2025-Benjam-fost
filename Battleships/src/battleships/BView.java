@@ -17,8 +17,11 @@ import java.util.Observable;
 public class BView implements Observer{
     
     private static final Dimension PANEL_SIZE = new Dimension (500,500);
-    private static final int GRID_SIZE = 11;
+    private final int GRID_SIZE = 11;
     
+    // Holds references to the button cells
+    // Accounts for labels by being sized against the playable area, GRID_SIZE - 1
+    private JButton[][] cellButtons;
     private final BModel model;
     private final BController controller;
     private JFrame frame;
@@ -61,6 +64,7 @@ public class BView implements Observer{
     private void createPanel(){
         panel = new JPanel();
         panel.setLayout(new GridLayout(GRID_SIZE,GRID_SIZE));
+        cellButtons = new JButton[GRID_SIZE - 1][GRID_SIZE - 1];
         
         /*
         Below dynamically adds the grid content
@@ -77,12 +81,14 @@ public class BView implements Observer{
         }
         
         // Fills the rest of the grid
-        for (int y = 1; y < GRID_SIZE; y++){
+        for (int y = 0; y < GRID_SIZE - 1; y++){
             // Adds the number label
-            panel.add(new JLabel(String.valueOf(y)));
+            panel.add(new JLabel(String.valueOf(y + 1)));
             // Adds the button cells
-            for (int x = 1; x < GRID_SIZE; x++){
-                panel.add(createCellButton());
+            for (int x = 0; x < GRID_SIZE - 1; x++){
+                JButton cellButton = createCellButton(y,x);
+                cellButtons[y][x] = cellButton;
+                panel.add(createCellButton(y,x));
             } 
         }
         
@@ -90,11 +96,10 @@ public class BView implements Observer{
         panel.setPreferredSize(PANEL_SIZE);
     }
     
-    // TODO
-    // Factory method that creates a button for a grid cell, will be expanded with more logic
-    private JButton createCellButton(){
+    // Factory method that creates a button for a grid cell, links to the controller
+    private JButton createCellButton(int x, int y){
         JButton button = new JButton("");
-        button.addActionListener((ActionEvent e) -> {button.setText("H");});
+        button.addActionListener((ActionEvent e) -> {controller.handleCellClick(x,y);});
         
         return button;
     }
@@ -105,6 +110,12 @@ public class BView implements Observer{
      */
     @Override
     public void update(Observable o, Object arg) {
+        System.out.println(cellButtons);
         System.out.println("UPDATE");
+    }
+    
+    public void updateCell(int x, int y){
+        System.out.println("updateCell (" + x + ", " + y + "): to H" );
+        cellButtons[x][y].setText("H");
     }
 }
