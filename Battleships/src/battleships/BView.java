@@ -84,11 +84,11 @@ public class BView implements Observer{
         for (int y = 0; y < GRID_SIZE - 1; y++){
             // Adds the number label
             panel.add(new JLabel(String.valueOf(y + 1)));
-            // Adds the button cells
+            // Adds the button cells to the array
             for (int x = 0; x < GRID_SIZE - 1; x++){
-                JButton cellButton = createCellButton(y,x);
-                cellButtons[y][x] = cellButton;
-                panel.add(createCellButton(y,x));
+                JButton cellButton = createCellButton(x,y);
+                cellButtons[x][y] = cellButton;
+                panel.add(cellButton);
             } 
         }
         
@@ -113,7 +113,7 @@ public class BView implements Observer{
         System.out.println(cellButtons);
         System.out.println("UPDATE");
     }
-    
+    // TODO: INTEGRATE with update
     public void updateCell(int x, int y){
         System.out.println("updateCell (" + x + ", " + y + "): to H" );
         cellButtons[x][y].setText("H");
