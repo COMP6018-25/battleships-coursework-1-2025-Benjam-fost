@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package battleships;
 
 /**
  *
- * @author Ben9H
+ * @author Ben Foster
  */
 public class Battleships {
 
@@ -14,9 +13,7 @@ public class Battleships {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            createAndShowGUI();
-        });
+        javax.swing.SwingUtilities.invokeLater(Battleships::createAndShowGUI);
     }
 
     private static void createAndShowGUI() {
