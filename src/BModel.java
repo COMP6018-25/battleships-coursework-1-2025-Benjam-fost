@@ -1,25 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 import java.util.Observable;
 
 /**
  *
- * @author Ben9H
+ * @author Ben
  */
 class BModel extends Observable{
-    
+    // Holds all ship and cell states plus grid-specific functionality
+    private BGrid grid;
+
     public BModel() {
+        grid = new BGrid();
         init();
     }
-    
+
+    public BGrid getGrid() { return grid; }
+
+    // TODO add ship placement + observer logic
     public void init(){
+
         return;
     }
 
-    void change() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean attack(int x, int y) {
+        boolean hit = grid.attackCell(x,y);
+        notifyObservers();
+        return hit;
     }
 }

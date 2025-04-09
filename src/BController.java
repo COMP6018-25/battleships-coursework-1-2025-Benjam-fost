@@ -1,35 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 /**
  *
- * @author Ben9H
+ * @author Ben
  */
 class BController {
     
-    private BModel model;
-    private BView view;
-    
+    private final BModel model;
+
     public BController(BModel model) {
         this.model = model;
     }
-    
-    public void setView(BView view) {
-        this.view = view;
-    }
-    
-    public void change() {
-        model.change();
-    }
-    
-    public void init() {
-        model.init();
-    }
 
-    void handleCellClick(int x, int y) {
-        view.updateCell(x,y);
+    public void handleCellClick(int x, int y) {
+        model.attack(x,y);
     }
     
 }
