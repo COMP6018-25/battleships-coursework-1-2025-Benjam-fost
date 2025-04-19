@@ -11,7 +11,10 @@ class BController {
     }
 
     public void handleCellClick(int x, int y) {
-        model.attack(x,y);
+
+        if (!model.getGrid().cellStatus(x, y)) {
+            model.attack(x, y);
+        }
     }
     
 }

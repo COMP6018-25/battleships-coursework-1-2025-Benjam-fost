@@ -30,7 +30,6 @@ public class BView implements Observer{
         createGUI();
         
         this.controller = controller;
-        controller.setView(this);
         update(model, null);
     }
     
@@ -104,12 +103,23 @@ public class BView implements Observer{
      */
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(cellButtons);
+        if (arg instanceof BModel.CellUpdate update) {
+            updateCell(update.x(), update.y(), update.isHit());
+            if (update.isShipSunk()) {
+                System.out.println("Ship sunk!");
+            }
+        } else if (arg instanceof BModel.GameEndUpdate update) {
+            System.out.println("Game end!");
+        }
         System.out.println("UPDATE");
     }
-    // TODO: INTEGRATE with update
-    public void updateCell(int x, int y){
-        System.out.println("updateCell (" + x + ", " + y + "): to H" );
-        cellButtons[x][y].setText("H");
+
+    public void updateCell(int x, int y, boolean isHit){
+        System.out.println("updateCell (" + x + ", " + y + ")" );
+        if (isHit) {
+            cellButtons[x][y].setText("H");
+        } else {
+            cellButtons[x][y].setText("M");
+        }
     }
 }
