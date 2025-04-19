@@ -16,21 +16,18 @@ public class BView implements Observer{
     // Holds references to the button cells
     // Accounts for labels by being sized against the playable area, GRID_SIZE - 1
     private JButton[][] cellButtons;
-    private final BModel model;
     private final BController controller;
     private JFrame frame;
     private JPanel panel;
     
     
     public BView(BModel model, BController controller) {
-        this.model = model;
         model.addObserver(this);
         
         // Main function for displaying the GUI on the screen
         createGUI();
         
         this.controller = controller;
-        update(model, null);
     }
     
     // Handles top level Swing code, calls another function for the minutiae
