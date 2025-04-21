@@ -13,20 +13,14 @@ class BModel extends Observable{
     public BModel() {
         grid = new BGrid();
         tries = 0;
-        init();
     }
 
+    // Data transfer objects
     public record CellUpdate(int x, int y, boolean isHit, boolean isShipSunk) {}
-
     public record GameEndUpdate(int tries) {}
 
+
     public BGrid getGrid() { return grid; }
-
-    // TODO add ship placement + observer logic
-    public void init(){
-
-        return;
-    }
 
     // TODO load functionality
     private void load(File file){

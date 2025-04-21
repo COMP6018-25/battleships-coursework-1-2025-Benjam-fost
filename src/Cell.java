@@ -15,6 +15,18 @@ public class Cell {
         return hit;
     }
 
+    public void setShip(Ship ship) {
+        this.ship = ship;
+    }
+
+    public Ship getShip() {
+        return ship;
+    }
+
+    public boolean hasShip() {
+        return ship != null;
+    }
+
     public boolean attack() {
         // If there is a ship, and it has not been hit on this cell
         if (hasShip() && !hit) {
@@ -25,17 +37,5 @@ public class Cell {
 
         hit = true;
         return false;
-    }
-
-    public void setShip(Ship ship) {
-        this.ship = ship;
-    }
-
-    public Ship getShip() {
-            return ship;
-    }
-
-    public boolean hasShip() {
-        return ship != null;
     }
 }
