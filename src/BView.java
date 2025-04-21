@@ -5,7 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- *
+ * A View connected to a controller, observing a Model. Generates the GUI, an interactable grid of buttons.
  * @author Ben
  */
 public class BView implements Observer{
@@ -71,17 +71,16 @@ public class BView implements Observer{
         }
         
         // Fills the rest of the grid
-        for (int y = 0; y < GRID_SIZE - 1; y++){
+        for (int y = 0; y < GRID_SIZE - 1; y++) {
             // Adds the number label
             panel.add(new JLabel(String.valueOf(y + 1)));
             // Adds the button cells to the array
-            for (int x = 0; x < GRID_SIZE - 1; x++){
-                JButton cellButton = createCellButton(x,y);
+            for (int x = 0; x < GRID_SIZE - 1; x++) {
+                JButton cellButton = createCellButton(x, y);
                 cellButtons[x][y] = cellButton;
                 panel.add(cellButton);
-            } 
+            }
         }
-        
         // Sets the size of the content pane as this.pane will be the only child
         panel.setPreferredSize(PANEL_SIZE);
     }
@@ -89,7 +88,7 @@ public class BView implements Observer{
     // Factory method that creates a button for a grid cell, links to the controller
     private JButton createCellButton(int x, int y){
         JButton button = new JButton("");
-        button.addActionListener((ActionEvent e) -> {controller.handleCellClick(x,y);});
+        button.addActionListener((ActionEvent e) -> { controller.handleCellClick(x,y); });
         
         return button;
     }
@@ -107,6 +106,8 @@ public class BView implements Observer{
             }
         } else if (arg instanceof BModel.GameEndUpdate update) {
             System.out.println("Game end!");
+        } else {
+            System.out.println("ERROR | Unexpected arg: " + arg);
         }
         System.out.println("UPDATE");
     }

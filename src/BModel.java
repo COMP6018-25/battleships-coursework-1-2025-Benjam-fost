@@ -2,14 +2,12 @@ import java.io.File;
 import java.util.Observable;
 
 /**
- *
+ * A composite, standalone Model which stores and manages the game state.
  * @author Ben
  */
-
-
 class BModel extends Observable{
     // Holds all ship and cell states plus grid-specific functionality
-    private BGrid grid;
+    private final BGrid grid;
     private int tries;
 
     public BModel() {
@@ -39,17 +37,17 @@ class BModel extends Observable{
         return;
     }
 
-    public boolean attack(int x, int y) {
+    public void attack(int x, int y) {
         tries++;
         boolean hit = grid.attackCell(x,y);
+        boolean shipSunk = grid.isShipSunkAt(x, y);
         setChanged();
-        notifyObservers(new CellUpdate(x,y,hit,false));
+        notifyObservers(new CellUpdate(x, y, hit, shipSunk));
 
         // TODO implement ships + game over
         if (false) {
             setChanged();
             notifyObservers(new GameEndUpdate(tries));
         }
-        return hit;
     }
 }

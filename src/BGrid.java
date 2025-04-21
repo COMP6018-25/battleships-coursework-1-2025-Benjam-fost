@@ -1,5 +1,5 @@
 /**
- *
+ * Stores game state and functionality related to the playable grid. Part of a composite BModel. Co-manages game state with Cells.
  * @author Ben
  */
 class BGrid {
@@ -30,7 +30,16 @@ class BGrid {
 
     public int getSize() { return GRID_SIZE; }
 
-    public Boolean cellStatus(int x, int y){
+    public Boolean isShipSunkAt(int x, int y) {
+        Cell cell = cells[x][y];
+        if (cell.hasShip()) {
+            return cell.getShip().isSunk();
+        }
+        // Ship is not present or did not sink
+        return false;
+    }
+
+    public Boolean isCellHit(int x, int y) {
         return cells[x][y].isHit();
     }
 }
