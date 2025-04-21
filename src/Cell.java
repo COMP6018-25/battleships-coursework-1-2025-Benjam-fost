@@ -1,9 +1,11 @@
 public class Cell {
 
     private boolean hit;
+    private boolean containsShip;
 
     public Cell(){
         hit = false;
+        containsShip = false;
     }
 
     public boolean isHit(){
@@ -11,12 +13,8 @@ public class Cell {
     }
 
     public boolean attack() {
-        if (hit){
-            return false;
-        }
-
         hit = true;
 
-        return true;
+        return containsShip;
     }
 }
