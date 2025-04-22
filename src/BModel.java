@@ -9,16 +9,17 @@ class BModel extends Observable{
     // Holds all ship and cell states plus grid-specific functionality
     private final BGrid grid;
     private int tries;
+    private int shipsSunk;
 
     public BModel() {
         grid = new BGrid();
         tries = 0;
+        shipsSunk = 0;
     }
 
     // Data transfer objects
     public record CellUpdate(int x, int y, boolean isHit, boolean isShipSunk) {}
     public record GameEndUpdate(int tries) {}
-
 
     public BGrid getGrid() { return grid; }
 
@@ -35,11 +36,14 @@ class BModel extends Observable{
         tries++;
         boolean hit = grid.attackCell(x,y);
         boolean shipSunk = grid.isShipSunkAt(x, y);
+        if (shipSunk) {
+            shipsSunk++;
+        }
         setChanged();
         notifyObservers(new CellUpdate(x, y, hit, shipSunk));
 
         // TODO implement ships + game over
-        if (false) {
+        if (shipsSunk == 5) {
             setChanged();
             notifyObservers(new GameEndUpdate(tries));
         }

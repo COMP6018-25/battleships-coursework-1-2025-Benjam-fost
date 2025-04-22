@@ -104,16 +104,14 @@ public class BView implements Observer{
             if (update.isShipSunk()) {
                 System.out.println("Ship sunk!");
             }
-        } else if (arg instanceof BModel.GameEndUpdate update) {
-            System.out.println("Game end!");
+        } else if (arg instanceof BModel.GameEndUpdate(int tries)) {
+            System.out.println("Game end!\n| Tries: " + tries);
         } else {
             System.out.println("ERROR | Unexpected arg: " + arg);
         }
-        System.out.println("UPDATE");
     }
 
     public void updateCell(int x, int y, boolean isHit){
-        System.out.println("updateCell (" + x + ", " + y + ")" );
         if (isHit) {
             cellButtons[x][y].setText("H");
         } else {

@@ -5,9 +5,6 @@ public class BCLI {
         Scanner scanner = new Scanner(System.in);
         BModel model = new BModel();
         boolean running = true;
-
-        while (running) {
-            String input = scanner.nextLine();
-        }
+        System.out.println("Welcome to Battleships");
     }
 }

@@ -19,6 +19,7 @@ class BGrid {
     }
 
     private void init(){
+        System.out.println("Creating the board...");
         for (int x = 0; x < GRID_SIZE; x++) {
             for (int y = 0; y < GRID_SIZE; y++) {
                 cells[x][y] = new Cell();
@@ -27,15 +28,21 @@ class BGrid {
         placeShips();
     }
 
+    private int randomIndex() {
+        return (int)(Math.random() * GRID_SIZE);
+    }
+
     /**
      * Places ships at valid, random positions and orientations.
      */
     private void placeShips() {
+        System.out.print("Placing ships");
         for (Ship ship : ships) {
+            System.out.print('.');
             int size = ship.getSize();
             boolean horizontal = Math.random() > 0.5;
-            int randomX = (int)(Math.random() * GRID_SIZE);
-            int randomY = (int)(Math.random() * GRID_SIZE);
+            int randomX = randomIndex();
+            int randomY = randomIndex();
             boolean valid = false;
 
             // Finds a valid, random position at the set orientation
@@ -44,8 +51,8 @@ class BGrid {
                 if (horizontal) {
                     // If the ship can't fit, re-select
                     if (!((randomX + size < GRID_SIZE) && (randomY < GRID_SIZE))) {
-                        randomX = (int)(Math.random() * GRID_SIZE);
-                        randomY = (int)(Math.random() * GRID_SIZE);
+                        randomX = randomIndex();
+                        randomY = randomIndex();
                     } else {
                         valid = true;
                         // Check if the placement would bisect another ship
@@ -53,20 +60,26 @@ class BGrid {
                             int index = pointer + randomX;
                             if (cells[index][randomY].hasShip()) {
                                 valid = false;
+                                randomX = randomIndex();
+                                randomY = randomIndex();
+                                break;
                             }
                         }
                     }
                 } else {
                     // Identical logic but for the other axis
                     if (!((randomX < GRID_SIZE) && (randomY + size < GRID_SIZE))) {
-                        randomX = (int)(Math.random() * GRID_SIZE);
-                        randomY = (int)(Math.random() * GRID_SIZE);
+                        randomX = randomIndex();
+                        randomY = randomIndex();
                     } else {
                         valid = true;
                         for (int pointer = 0; pointer < size; pointer++) {
                             int index = pointer + randomY;
                             if (cells[randomX][index].hasShip()) {
                                 valid = false;
+                                randomX = randomIndex();
+                                randomY = randomIndex();
+                                break;
                             }
                         }
                     }
