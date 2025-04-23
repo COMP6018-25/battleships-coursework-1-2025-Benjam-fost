@@ -50,7 +50,7 @@ public class BView implements Observer{
         frame.setVisible(true);
     }
     
-    // Initialises the panel and adds content, to be added to the contentPanel of frame
+    // Initialises the panel and adds content to be added to the contentPanel of the frame
     private void createPanel(){
         panel = new JPanel();
         panel.setLayout(new GridLayout(GRID_SIZE,GRID_SIZE));

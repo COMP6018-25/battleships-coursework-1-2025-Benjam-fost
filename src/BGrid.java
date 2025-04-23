@@ -18,6 +18,27 @@ class BGrid {
         init();
     }
 
+    @Override
+    public String toString(){
+        String output = "\n";
+        for (int y = 0; y < GRID_SIZE; y++) {
+            for (int x = 0; x < GRID_SIZE; x++) {
+                Cell cell = cells[x][y];
+                if (cell.isHit()) {
+                    if (cell.hasShip()){
+                        output += "H ";
+                    } else {
+                        output += "M ";
+                    }
+                } else {
+                    output += "□ ";
+                }
+            }
+            output += "\n";
+        }
+        return output;
+    }
+
     private void init(){
         System.out.println("Creating the board...");
         for (int x = 0; x < GRID_SIZE; x++) {

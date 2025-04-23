@@ -23,6 +23,10 @@ class BModel extends Observable{
 
     public BGrid getGrid() { return grid; }
 
+    public int getShipsSunk() { return shipsSunk; }
+
+    public int getTries() { return tries; }
+
     // TODO load functionality
     private void load(File file){
         return;
@@ -42,7 +46,6 @@ class BModel extends Observable{
         setChanged();
         notifyObservers(new CellUpdate(x, y, hit, shipSunk));
 
-        // TODO implement ships + game over
         if (shipsSunk == 5) {
             setChanged();
             notifyObservers(new GameEndUpdate(tries));
