@@ -20,23 +20,35 @@ class BGrid {
 
     @Override
     public String toString(){
-        String output = "\n";
+        StringBuilder output = new StringBuilder("\n");
+        // Displays the column headers
+        output.append("◪  ");
+        for (int col = 0; col < GRID_SIZE; col++) {
+            output.append((char)('A' + col)).append(' ');
+        }
+        output.append("\n");
+
+        // Display the grid cells, with hits and misses
         for (int y = 0; y < GRID_SIZE; y++) {
+            // Display the row numbers
+            String rowNumber = String.valueOf(y + 1);
+            output.append(rowNumber).append(rowNumber.length() == 1 ? "  " : " ");
+
             for (int x = 0; x < GRID_SIZE; x++) {
                 Cell cell = cells[x][y];
                 if (cell.isHit()) {
                     if (cell.hasShip()){
-                        output += "H ";
+                        output.append("H ");
                     } else {
-                        output += "M ";
+                        output.append("M ");
                     }
                 } else {
-                    output += "□ ";
+                    output.append("□ ");
                 }
             }
-            output += "\n";
+            output.append("\n");
         }
-        return output;
+        return output.toString();
     }
 
     private void init(){
