@@ -30,10 +30,10 @@ public class BCLI {
             System.out.println(model.getGrid());
             System.out.print("\nAttack cell -> ");
             int x, y;
-
+            String input = scanner.nextLine().trim().toUpperCase();
             // Gets the column letter, then converts it into a y-position on the grid
             try {
-                y = scanner.next().toUpperCase().charAt(0) - 'A';
+                y = input.charAt(0) - 'A';
             } catch (Exception e) {
                 System.out.println("Enter a column letter, then a row number, with no spaces like A1 or J10");
                 continue;
@@ -46,7 +46,7 @@ public class BCLI {
 
             // Gets the x-position
             try {
-                x = scanner.nextInt() - 1;
+                x = Integer.parseInt(input.substring(1)) - 1;
             } catch (Exception e) {
                 System.out.println("Enter a column letter, then a row number, with no spaces like A1 or J10");
                 continue;

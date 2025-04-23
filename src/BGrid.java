@@ -28,12 +28,11 @@ class BGrid {
         }
         output.append("\n");
 
-        // Display the grid cells, with hits and misses
         for (int y = 0; y < GRID_SIZE; y++) {
             // Display the row numbers
             String rowNumber = String.valueOf(y + 1);
             output.append(rowNumber).append(rowNumber.length() == 1 ? "  " : " ");
-
+            // Display the grid cells, with hits and misses
             for (int x = 0; x < GRID_SIZE; x++) {
                 Cell cell = cells[x][y];
                 if (cell.isHit()) {
