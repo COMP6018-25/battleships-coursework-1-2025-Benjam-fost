@@ -29,43 +29,44 @@ public class BCLI {
             // Shows the grid at every turn, with hits and misses
             System.out.println(model.getGrid());
             System.out.print("\nAttack cell -> ");
-            int x, y;
+            int row, col;
             String input = scanner.nextLine().trim().toUpperCase();
-            // Gets the column letter, then converts it into a y-position on the grid
+            // Gets the column letter, then converts it into a column index on the grid
             try {
-                y = input.charAt(0) - 'A';
+                col = input.charAt(0) - 'A';
             } catch (Exception e) {
                 System.out.println("Enter a column letter, then a row number, with no spaces like A1 or J10");
                 continue;
             }
-            // Validates y-position
-            if (y > size || y < 0) {
+            // Validates index
+            if (col > size || col < 0) {
                 System.out.println("Invalid column letter");
                 continue;
             }
 
-            // Gets the x-position
+            // Gets the row index
             try {
-                x = Integer.parseInt(input.substring(1)) - 1;
+                row = Integer.parseInt(input.substring(1)) - 1;
             } catch (Exception e) {
                 System.out.println("Enter a column letter, then a row number, with no spaces like A1 or J10");
                 continue;
             }
-            // Validates the x-position
-            if (x > size || x < 0) {
+            // Validates the index
+            if (row > size || row < 0) {
                 System.out.println("Enter a row number between 1-10");
                 continue;
             }
 
-            model.attack(x, y);
+            model.attack(col, row);
+
             // Checks if a ship is sunk
             if (model.getShipsSunk() > sunkShips) {
-                System.out.println("| | Ship sunk! | |");
+                System.out.println("\n| | Ship sunk! | |");
             }
             // Checks if the game is won
             if (model.getShipsSunk() == 5) {
                 running = false;
-                System.out.println("| | You win! | |\nAll ships sunk");
+                System.out.println("\n| | You win! | |\nAll ships sunk");
             }
         }
     }
