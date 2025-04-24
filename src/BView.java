@@ -48,6 +48,10 @@ public class BView implements Observer{
         frame.setResizable(false);
         // Needed to show the JFrame on the screen
         frame.setVisible(true);
+        // Displays the GUI at the front
+        frame.toFront();
+        frame.requestFocus();
+        frame.setAlwaysOnTop(true);
     }
     
     // Initialises the panel and adds content to be added to the contentPanel of the frame
