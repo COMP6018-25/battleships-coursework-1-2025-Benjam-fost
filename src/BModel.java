@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.Observable;
 
 /**
- * A composite, standalone Model which stores and manages the game state.
+ * A composite Model which stores and manages the game state.
  * @author Ben
  */
 class BModel extends Observable{
@@ -29,10 +29,6 @@ class BModel extends Observable{
 
     // TODO load functionality
     private void load(File file){
-        return;
-    }
-    // TODO save functionality
-    private void save(File file){
         return;
     }
 

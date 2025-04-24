@@ -12,10 +12,17 @@ class BGrid {
     private final Cell[][] cells;
     private final Ship[] ships;
 
-    public BGrid() {
+    public BGrid(boolean randomShips) {
         cells = new Cell[GRID_SIZE][GRID_SIZE];
         ships = new Ship[]{new Ship(5), new Ship(4), new Ship(3), new Ship(2), new Ship(2)};
-        init();
+        initGrid();
+        if (randomShips) {
+            placeShips();
+        }
+    }
+
+    public BGrid() {
+        this(true);
     }
 
     @Override
@@ -50,18 +57,58 @@ class BGrid {
         return output.toString();
     }
 
-    private void init(){
+    private void initGrid(){
         System.out.println("Creating the board...");
         for (int x = 0; x < GRID_SIZE; x++) {
             for (int y = 0; y < GRID_SIZE; y++) {
                 cells[x][y] = new Cell();
             }
         }
-        placeShips();
     }
 
     private int randomIndex() {
         return (int)(Math.random() * GRID_SIZE);
+    }
+
+    private boolean noHorizontalBisections(int x, int y, int size) {
+        for (int pointer = 0; pointer < size; pointer++) {
+            int index = pointer + x;
+            // If a ship bisects the chosen cells, re-select
+            if (cells[index][y].hasShip()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean noVerticalBisections(int x, int y, int size) {
+        for (int pointer = 0; pointer < size; pointer++) {
+            int index = pointer + y;
+            if (cells[x][index].hasShip()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isValidPlacement(int x, int y, int size, boolean horizontal) {
+        // omits pos >= 0 check as both randomX and size never go below 0
+        if (horizontal) {
+            // If the ship can't fit, placement is invalid
+            if (!((x + size < GRID_SIZE) && (y < GRID_SIZE))) {
+                return false;
+            } else {
+                // If the placement does not bisect another ship, the placement is valid
+                return noHorizontalBisections(x, y, size);
+            }
+        } else {
+            // Identical logic but for the other axis
+            if (!((x < GRID_SIZE) && (y + size < GRID_SIZE))) {
+                return false;
+            } else {
+                return noVerticalBisections(x, y, size);
+            }
+        }
     }
 
     /**
@@ -71,63 +118,46 @@ class BGrid {
         System.out.print("Placing ships");
         for (Ship ship : ships) {
             System.out.print('.');
-            int size = ship.getSize();
             boolean horizontal = Math.random() > 0.5;
             int randomX = randomIndex();
             int randomY = randomIndex();
-            boolean valid = false;
 
-            // Finds a valid, random position at the set orientation
-            while (!valid) {
-                // omits pos >= 0 check as both randomX and size never go below 0
-                if (horizontal) {
-                    // If the ship can't fit, re-select
-                    if (!((randomX + size < GRID_SIZE) && (randomY < GRID_SIZE))) {
-                        randomX = randomIndex();
-                        randomY = randomIndex();
-                    } else {
-                        valid = true;
-                        // Check if the placement would bisect another ship
-                        for (int pointer = 0; pointer < size; pointer++) {
-                            int index = pointer + randomX;
-                            if (cells[index][randomY].hasShip()) {
-                                valid = false;
-                                randomX = randomIndex();
-                                randomY = randomIndex();
-                                break;
-                            }
-                        }
-                    }
+            // Finds a valid, random position at the set orientation and places the ship
+            for (;;) {
+                if (placeShip(randomX, randomY, ship, horizontal)) {
+                    break;
                 } else {
-                    // Identical logic but for the other axis
-                    if (!((randomX < GRID_SIZE) && (randomY + size < GRID_SIZE))) {
-                        randomX = randomIndex();
-                        randomY = randomIndex();
-                    } else {
-                        valid = true;
-                        for (int pointer = 0; pointer < size; pointer++) {
-                            int index = pointer + randomY;
-                            if (cells[randomX][index].hasShip()) {
-                                valid = false;
-                                randomX = randomIndex();
-                                randomY = randomIndex();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            // A valid, random position has been found, now place the ship
-            if (horizontal) {
-                for (int pointer = 0; pointer < size; pointer++) {
-                    cells[randomX + pointer][randomY].setShip(ship);
-                }
-            } else {
-                for (int pointer = 0; pointer < size; pointer++) {
-                    cells[randomX][randomY + pointer].setShip(ship);
+                    randomX = randomIndex();
+                    randomY = randomIndex();
                 }
             }
         }
+        System.out.println();
+    }
+
+    /**
+     * First checks if the ship can be placed in a position, then places the ship.
+     * @param x The x start position of the ship
+     * @param y The y start position of the ship
+     * @param ship The ship to place
+     * @param horizontal Represents the ship's orientation, vertical if not horizontal
+     * @return The success or failure of the operation
+     */
+    public boolean placeShip(int x, int y, Ship ship, boolean horizontal) {
+        int size = ship.getSize();
+        // Checks if placement is valid before continuing
+        if (!isValidPlacement(x, y, size, horizontal)) return false;
+
+        if (horizontal) {
+            for (int pointer = 0; pointer < size; pointer++) {
+                cells[x + pointer][y].setShip(ship);
+            }
+        } else {
+            for (int pointer = 0; pointer < size; pointer++) {
+                cells[x][y + pointer].setShip(ship);
+            }
+        }
+        return true;
     }
 
     public boolean attackCell(int x, int y) {
@@ -141,7 +171,7 @@ class BGrid {
         if (cell.hasShip()) {
             return cell.getShip().isSunk();
         }
-        // Ship is not present or did not sink
+        // The ship is not present or did not sink
         return false;
     }
 
