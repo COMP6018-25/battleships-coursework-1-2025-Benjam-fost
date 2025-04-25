@@ -1,4 +1,4 @@
-import java.io.File;
+import java.io.*;
 import java.util.Observable;
 
 /**
@@ -11,13 +11,18 @@ class BModel extends Observable{
     private int tries;
     private int shipsSunk;
 
-    public BModel() {
-        grid = new BGrid();
+    public BModel(boolean randomShips) {
+        grid = new BGrid(randomShips);
         tries = 0;
         shipsSunk = 0;
     }
 
+    public BModel() {
+        this(true);
+    }
+
     // Data transfer objects
+    public record GameLoad(boolean success) {}
     public record CellUpdate(int x, int y, boolean isHit, boolean isShipSunk) {}
     public record GameEndUpdate(int tries) {}
 
@@ -28,11 +33,19 @@ class BModel extends Observable{
     public int getTries() { return tries; }
 
     // TODO load functionality
-    private void load(File file){
-        return;
+    protected boolean loadBoard(File file) {
+        boolean loaded = grid.loadShips(file);
+        setChanged();
+        notifyObservers(new GameLoad(loaded));
+        return loaded;
     }
 
     public void attack(int x, int y) {
+        // Checks if the cell has been hit already
+        if (grid.isCellHit(x, y)) {
+            System.out.println("You have already attacked this cell!");
+            return;
+        }
         tries++;
         boolean hit = grid.attackCell(x,y);
         boolean shipSunk = grid.isShipSunkAt(x, y);

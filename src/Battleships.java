@@ -27,7 +27,7 @@ public class Battleships {
                 javax.swing.SwingUtilities.invokeLater(Battleships::launchGUI);
             } else if (input.equals("0")){
                 selecting = false;
-                BCLI cli = new BCLI();
+                new BCLI();
             } else {
                 System.out.println("Please press 0 for the CLI version || Press 1 for the GUI version");
                 input = scanner.nextLine();
@@ -38,7 +38,7 @@ public class Battleships {
     private static void launchGUI() {
         BModel model = new BModel();
         BController controller = new BController(model);
-        BView view = new BView(model, controller);
+        new BView(model, controller);
     }
     
 }

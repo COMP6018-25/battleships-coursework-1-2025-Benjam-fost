@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.ArrayList;
+
 /**
  * Stores game state and functionality related to the playable grid. Part of a composite BModel. Co-manages game state with Cells.
  * @author Ben
@@ -10,11 +13,10 @@ class BGrid {
     private final int GRID_SIZE = 10;
     // Holds the virtual state of each cell
     private final Cell[][] cells;
-    private final Ship[] ships;
+    private final ArrayList<Ship> ships = new ArrayList<>();
 
     public BGrid(boolean randomShips) {
         cells = new Cell[GRID_SIZE][GRID_SIZE];
-        ships = new Ship[]{new Ship(5), new Ship(4), new Ship(3), new Ship(2), new Ship(2)};
         initGrid();
         if (randomShips) {
             placeShips();
@@ -23,6 +25,44 @@ class BGrid {
 
     public BGrid() {
         this(true);
+    }
+
+    protected boolean loadShips(File file) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                // Skips comments or empty lines
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                // Gets data from each line and checks if that line is of the required length
+                String[] data = line.split(",");
+                if (data.length != 4) {
+                    System.out.printf("| | Invalid file format! | |\nExpected 4 columns but got %d\n", data.length);
+                    return false;
+                }
+
+                // Parsing data
+                int size = Integer.parseInt(data[0]);
+                int x = Integer.parseInt(data[1]);
+                int y = Integer.parseInt(data[2]);
+                boolean horizontal = data[3].equals("H");
+                Ship ship = new Ship(size);
+                ships.add(ship);
+
+                if (!placeShip(x, y, ship, horizontal)) {
+                    System.out.printf("| | Error placing ship! | |\nSize: %d, X: %d, Y: %d, Horizontal: %b\n", size, x, y, horizontal);
+                    return false;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("| | File not found! | |");
+            return false;
+        } catch (IOException e) {
+            System.out.println("| | File read error! | |");
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -115,9 +155,14 @@ class BGrid {
      * Places ships at valid, random positions and orientations.
      */
     private void placeShips() {
+        // Creates and adds each Ship to Ships and grid cells
+        int[] sizes = {5, 4, 3, 2, 2};
         System.out.print("Placing ships");
-        for (Ship ship : ships) {
+        for (int size : sizes) {
             System.out.print('.');
+
+            Ship ship = new Ship(size);
+            ships.add(ship);
             boolean horizontal = Math.random() > 0.5;
             int randomX = randomIndex();
             int randomY = randomIndex();
