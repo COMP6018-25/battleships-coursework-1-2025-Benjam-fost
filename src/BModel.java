@@ -41,6 +41,11 @@ class BModel extends Observable{
     }
 
     public void attack(int x, int y) {
+        // Checks if the cell has been hit already
+        if (grid.isCellHit(x, y)) {
+            System.out.println("You have already attacked this cell!");
+            return;
+        }
         tries++;
         boolean hit = grid.attackCell(x,y);
         boolean shipSunk = grid.isShipSunkAt(x, y);

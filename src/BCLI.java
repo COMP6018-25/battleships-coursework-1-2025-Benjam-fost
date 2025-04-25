@@ -8,7 +8,6 @@ public class BCLI {
 
     public BCLI() {
         scanner = new Scanner(System.in);
-        model = null;
         boolean selected = false;
 
         String instructions = "- There are 5 ships hidden in a 10x10 grid.\n" +
@@ -23,27 +22,41 @@ public class BCLI {
 
         String line = scanner.nextLine();
         while (!selected) {
-            if (line.equals("0")) {
+            // Starts a game with a random board
+            if (line.contains("0")) {
                 selected = true;
                 model = new BModel();
             }
-            else if (line.equals("1")) {
-                selected = true;
+            // Starts a game with a user-created board
+            else if (line.contains("1")) {
+                // Creates a model with no ships
                 model = new BModel(false);
-                System.out.println("Enter save file name: ");
-                File file = new File(scanner.nextLine());
-                model.getGrid().loadShips(file);
+                loadFile();
+                selected = true;
             } else {
-                System.out.println("Please enter 0 or 1");
+                System.out.println("| | Press 0 to start a new game || Press 1 to load a save file | |");
+                line = scanner.nextLine();
             }
         }
-        if (model != null) gameLoop();
-        else System.out.println("Something went wrong, please try again");
+        gameLoop();
+    }
+
+    private void loadFile() {
+        System.out.println("All save files must be in the saves folder");
+        for(;;) {
+            System.out.print("Enter save file name -> ");
+            // Processes the file path
+            String filePath = "saves/" + scanner.nextLine().trim();
+            if (!filePath.endsWith(".csv")) filePath += ".csv";
+            // Loads the custom board and handles any failures
+            boolean success = model.getGrid().loadShips(new File(filePath));
+            if (success) break;
+        }
     }
 
     private void gameLoop() {
         boolean running = true;
-        int sunkShips = 0;
+        int localSunkShips = 0;
         int size = model.getGrid().getSize() - 1;
 
         while(running) {
@@ -81,11 +94,13 @@ public class BCLI {
             model.attack(col, row);
 
             // Checks if a ship is sunk
-            if (model.getShipsSunk() > sunkShips) {
+            int modelSunkShips = model.getShipsSunk();
+            if (modelSunkShips > localSunkShips) {
+                localSunkShips = modelSunkShips;
                 System.out.println("\n| | Ship sunk! | |");
             }
             // Checks if the game is won
-            if (model.getShipsSunk() == 5) {
+            if (modelSunkShips == 5) {
                 running = false;
                 System.out.println("\n| | You win! | |\nAll ships sunk");
             }
