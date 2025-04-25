@@ -1,23 +1,44 @@
+import java.io.File;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class BCLI {
     private final Scanner scanner;
-    private final BModel model;
+    private BModel model;
 
     public BCLI() {
-        model = new BModel();
         scanner = new Scanner(System.in);
+        model = null;
+        boolean selected = false;
+
         String instructions = "- There are 5 ships hidden in a 10x10 grid.\n" +
                 "- There is one carrier, one battleship, one cruiser, one submarine and two destroyers.\n" +
                 "- Every turn you can attack a cell and view the grid, showing your hits and misses.\n" +
                 "- To attack a cell, enter a capital column letter then a row number.\n" +
                 "- When a ship is sunk, or all ships are sunk, you will be notified.\n" +
-                "| | Press any key to continue | |";
+                "| | Press 0 to start a new game || Press 1 to load a save file | |";
+
         System.out.println("\n\n/\\/ CLI Battleships /\\/\n\n| | Instructions | |");
         System.out.println(instructions);
-        scanner.nextLine();
-        gameLoop();
+
+        String line = scanner.nextLine();
+        while (!selected) {
+            if (line.equals("0")) {
+                selected = true;
+                model = new BModel();
+            }
+            else if (line.equals("1")) {
+                selected = true;
+                model = new BModel(false);
+                System.out.println("Enter save file name: ");
+                File file = new File(scanner.nextLine());
+                model.getGrid().loadShips(file);
+            } else {
+                System.out.println("Please enter 0 or 1");
+            }
+        }
+        if (model != null) gameLoop();
+        else System.out.println("Something went wrong, please try again");
     }
 
     private void gameLoop() {
