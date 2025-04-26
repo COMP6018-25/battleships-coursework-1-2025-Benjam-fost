@@ -1,3 +1,7 @@
+/**
+ * A ship object with a size in the grid and a counter for hits.
+ * @author Ben
+ */
 public class Ship {
     private final int size;
     private int hits;

@@ -1,5 +1,5 @@
 /**
- * Stores an individual cell state, paired with a Ship object reference, co-managing game state with a Ship array in BGrid.java.
+ * Stores an individual cell state, paired with a Ship object reference, co-managing game state with a Ship array in Grid.java.
  * @author Ben
  */
 public class Cell {

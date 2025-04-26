@@ -8,7 +8,7 @@ import java.util.Observer;
  * A View connected to a controller, observing a Model. Generates the GUI, an interactable grid of buttons.
  * @author Ben
  */
-public class BView implements Observer{
+public class View implements Observer{
     
     private static final Dimension PANEL_SIZE = new Dimension (500,500);
     private final int GRID_SIZE = 11;
@@ -16,12 +16,14 @@ public class BView implements Observer{
     // Holds references to the button cells
     // Accounts for labels by being sized against the playable area, GRID_SIZE - 1
     private JButton[][] cellButtons;
-    private final BController controller;
-    private JFrame frame;
-    private JPanel panel;
-    
-    
-    public BView(BModel model, BController controller) {
+    private final Controller controller;
+
+    /**
+     * Creates a new View connected to a controller, observing a Model. Generates the GUI, a grid of interactable cell buttons.
+     * @param model The model to be observed by the controller. Must be a Model instance.
+     * @param controller The controller to be notified of cell clicks. Must be a Controller instance.
+     */
+    public View(Model model, Controller controller) {
         model.addObserver(this);
         
         // Main function for displaying the GUI on the screen
@@ -29,10 +31,12 @@ public class BView implements Observer{
         
         this.controller = controller;
     }
-    
-    // Handles top level Swing code, calls another function for the minutiae
-    public void createGUI(){
-        frame = new JFrame("BATTLESHIPS");
+
+    /**
+     * Creates the GUI and displays it on the screen.
+     */
+    private void createGUI(){
+        JFrame frame = new JFrame("BATTLESHIPS");
         // Halts the program when the JFrame is closed
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -40,9 +44,7 @@ public class BView implements Observer{
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
         // Creates the content of the panel
-        createPanel();
-        contentPane.add(panel);
-        
+        contentPane.add(createGridPanel());
         // handles sizing
         frame.pack();
         frame.setResizable(false);
@@ -53,10 +55,13 @@ public class BView implements Observer{
         frame.requestFocus();
         frame.setAlwaysOnTop(true);
     }
-    
-    // Initialises the panel and adds content to be added to the contentPanel of the frame
-    private void createPanel(){
-        panel = new JPanel();
+
+    /**
+     * Creates the grid and cells of the GUI.
+     * @return A JPanel containing the grid and cells.
+     */
+    private JPanel createGridPanel(){
+        JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(GRID_SIZE,GRID_SIZE));
         cellButtons = new JButton[GRID_SIZE - 1][GRID_SIZE - 1];
         
@@ -87,35 +92,48 @@ public class BView implements Observer{
         }
         // Sets the size of the content pane as this.pane will be the only child
         panel.setPreferredSize(PANEL_SIZE);
+        return panel;
     }
-    
-    // Factory method that creates a button for a grid cell, links to the controller
+
+    /**
+     * Creates a cell button with an action listener linked to the controller.
+     * @param x The x coordinate of the cell to be created.
+     * @param y The y coordinate of the cell to be created.
+     * @return A JButton with an action listener linked to the controller.
+     */
     private JButton createCellButton(int x, int y){
         JButton button = new JButton("");
         button.addActionListener((ActionEvent e) -> { controller.handleCellClick(x,y); });
         
         return button;
     }
-    
+
     /**
-     * @param
-     *
+     * Updates the GUI when the model changes.
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers} method.
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof BModel.CellUpdate update) {
+        if (arg instanceof Model.CellUpdate update) {
             updateCell(update.x(), update.y(), update.isHit());
             if (update.isShipSunk()) {
                 System.out.println("Ship sunk!");
             }
-        } else if (arg instanceof BModel.GameEndUpdate(int tries)) {
+        } else if (arg instanceof Model.GameEndUpdate(int tries)) {
             System.out.println("Game end!\n| Tries: " + tries);
         } else {
             System.out.println("ERROR | Unexpected arg: " + arg);
         }
     }
 
-    public void updateCell(int x, int y, boolean isHit){
+    /**
+     * Updates a single cell on the grid.
+     * @param x The x coordinate of the cell to be updated.
+     * @param y The y coordinate of the cell to be updated.
+     * @param isHit Whether the cell has been hit or not.
+     */
+    private void updateCell(int x, int y, boolean isHit){
         if (isHit) {
             cellButtons[x][y].setText("H");
         } else {

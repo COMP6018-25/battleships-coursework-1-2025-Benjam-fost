@@ -1,12 +1,18 @@
 import java.io.File;
-import java.util.Locale;
 import java.util.Scanner;
 
-public class BCLI {
+/**
+ * A command-line interface for the Battleships game.
+ * @author Ben
+ */
+public class CLI {
     private final Scanner scanner;
-    private BModel model;
+    private Model model;
 
-    public BCLI() {
+    /**
+     * Creates a new CLI instance, which starts a new game or loads a custom board.
+     */
+    public CLI() {
         scanner = new Scanner(System.in);
         boolean selected = false;
 
@@ -25,12 +31,12 @@ public class BCLI {
             // Starts a game with a random board
             if (line.contains("0")) {
                 selected = true;
-                model = new BModel();
+                model = new Model();
             }
             // Starts a game with a user-created board
             else if (line.contains("1")) {
                 // Creates a model with no ships
-                model = new BModel(false);
+                model = new Model(false);
                 loadFile();
                 selected = true;
             } else {
@@ -41,6 +47,9 @@ public class BCLI {
         gameLoop();
     }
 
+    /**
+     * Loads a custom board from a CSV file.
+     */
     private void loadFile() {
         System.out.println("All save files must be in the saves folder");
         for(;;) {
@@ -49,11 +58,14 @@ public class BCLI {
             String filePath = "saves/" + scanner.nextLine().trim();
             if (!filePath.endsWith(".csv")) filePath += ".csv";
             // Loads the custom board and handles any failures
-            boolean success = model.getGrid().loadShips(new File(filePath));
+            boolean success = model.loadGrid(new File(filePath));
             if (success) break;
         }
     }
 
+    /**
+     * A game loop which runs until the game is won.
+     */
     private void gameLoop() {
         boolean running = true;
         int localSunkShips = 0;
@@ -108,6 +120,6 @@ public class BCLI {
     }
 
     public static void main(String[] args) {
-        new BCLI();
+        new CLI();
     }
 }

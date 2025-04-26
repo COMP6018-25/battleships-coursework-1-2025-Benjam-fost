@@ -6,7 +6,7 @@
 import java.util.Scanner;
 
 /**
- *
+ * The main class for the Battleships game.
  * @author Ben Foster
  */
 public class Battleships {
@@ -27,7 +27,7 @@ public class Battleships {
                 javax.swing.SwingUtilities.invokeLater(Battleships::launchGUI);
             } else if (input.equals("0")){
                 selecting = false;
-                new BCLI();
+                new CLI();
             } else {
                 System.out.println("Please press 0 for the CLI version || Press 1 for the GUI version");
                 input = scanner.nextLine();
@@ -35,10 +35,13 @@ public class Battleships {
         }
     }
 
+    /**
+     * Creates a new View instance, which starts a new game or loads a custom board.
+     */
     private static void launchGUI() {
-        BModel model = new BModel();
-        BController controller = new BController(model);
-        new BView(model, controller);
+        Model model = new Model();
+        Controller controller = new Controller(model);
+        new View(model, controller);
     }
     
 }

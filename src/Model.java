@@ -5,19 +5,26 @@ import java.util.Observable;
  * A composite Model which stores and manages the game state.
  * @author Ben
  */
-class BModel extends Observable{
+class Model extends Observable{
     // Holds all ship and cell states plus grid-specific functionality
-    private final BGrid grid;
+    private final Grid grid;
     private int tries;
     private int shipsSunk;
 
-    public BModel(boolean randomShips) {
-        grid = new BGrid(randomShips);
+    /**
+     * Creates a new Model with a grid of either randomly generated or pre-set ships.
+     * @param randomShips Whether the ships should be randomly placed or not.
+     */
+    public Model(boolean randomShips) {
+        grid = new Grid(randomShips);
         tries = 0;
         shipsSunk = 0;
     }
 
-    public BModel() {
+    /**
+     * A default constructor.Creates a randomly generated grid of ships.
+     */
+    public Model() {
         this(true);
     }
 
@@ -26,20 +33,29 @@ class BModel extends Observable{
     public record CellUpdate(int x, int y, boolean isHit, boolean isShipSunk) {}
     public record GameEndUpdate(int tries) {}
 
-    public BGrid getGrid() { return grid; }
+    public Grid getGrid() { return grid; }
 
     public int getShipsSunk() { return shipsSunk; }
 
     public int getTries() { return tries; }
 
-    // TODO load functionality
-    protected boolean loadBoard(File file) {
+    /**
+     * Loads a grid of ships from a CSV file.
+     * @param file A CSV file containing ship data.
+     * @return Whether the ships were successfully loaded or not.
+     */
+    protected boolean loadGrid(File file) {
         boolean loaded = grid.loadShips(file);
         setChanged();
         notifyObservers(new GameLoad(loaded));
         return loaded;
     }
 
+    /**
+     * Attacks a cell in the grid.
+     * @param x The x coordinate of the cell to be attacked.
+     * @param y The y coordinate of the cell to be attacked.
+     */
     public void attack(int x, int y) {
         // Checks if the cell has been hit already
         if (grid.isCellHit(x, y)) {
