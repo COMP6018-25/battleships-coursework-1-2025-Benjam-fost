@@ -39,7 +39,7 @@ public class Battleships {
      * Creates a new View instance, which starts a new game or loads a custom board.
      */
     private static void launchGUI() {
-        Model model = new Model();
+        Model model = new Model(false);
         Controller controller = new Controller(model);
         new View(model, controller);
     }

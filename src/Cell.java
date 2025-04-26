@@ -27,14 +27,16 @@ public class Cell {
         return ship != null;
     }
 
+    /**
+     * Marks a Cell as hit. If the Cell has a Ship, and it has not been hit yet, the Ship is hit.
+     * @return Whether the attack missed or hit a Ship.
+     */
     public boolean attack() {
-        // If there is a ship, and it has not been hit on this cell
         if (hasShip() && !hit) {
             ship.hit();
             hit = true;
             return true;
         }
-
         hit = true;
         return false;
     }

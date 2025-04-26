@@ -1,8 +1,10 @@
+import java.io.File;
+
 /**
  * A controller for the View
  * @author Ben
  */
-class Controller {
+public class Controller {
     
     private final Model model;
 
@@ -20,5 +22,12 @@ class Controller {
             model.attack(x, y);
         }
     }
-    
+
+    public void randomGameStart() {
+        model.reset();
+    }
+
+    public void loadGame(File file) {
+        model.loadGrid(file);
+    }
 }

@@ -5,9 +5,9 @@ import java.util.Observable;
  * A composite Model which stores and manages the game state.
  * @author Ben
  */
-class Model extends Observable{
+public class Model extends Observable{
     // Holds all ship and cell states plus grid-specific functionality
-    private final Grid grid;
+    private Grid grid;
     private int tries;
     private int shipsSunk;
 
@@ -29,7 +29,8 @@ class Model extends Observable{
     }
 
     // Data transfer objects
-    public record GameLoad(boolean success) {}
+    public record GameStartUpdate() {}
+    public record GameLoadUpdate(boolean success) {}
     public record CellUpdate(int x, int y, boolean isHit, boolean isShipSunk) {}
     public record GameEndUpdate(int tries) {}
 
@@ -39,6 +40,14 @@ class Model extends Observable{
 
     public int getTries() { return tries; }
 
+    public void reset() {
+        grid = new Grid(true);
+        shipsSunk = 0;
+        tries = 0;
+        setChanged();
+        notifyObservers(new GameStartUpdate());
+    }
+
     /**
      * Loads a grid of ships from a CSV file.
      * @param file A CSV file containing ship data.
@@ -47,7 +56,7 @@ class Model extends Observable{
     protected boolean loadGrid(File file) {
         boolean loaded = grid.loadShips(file);
         setChanged();
-        notifyObservers(new GameLoad(loaded));
+        notifyObservers(new GameLoadUpdate(loaded));
         return loaded;
     }
 
