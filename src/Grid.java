@@ -2,10 +2,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Stores game state and functionality related to the playable grid. Part of a composite BModel. Co-manages game state with Cells.
+ * Stores game state and functionality related to the playable grid. Part of a composite Model. Co-manages game state with Cells.
  * @author Ben
  */
-class BGrid {
+class Grid {
     /*
     Defines the size of the play area
     1 column and row is reserved for column headers
@@ -15,7 +15,7 @@ class BGrid {
     private final Cell[][] cells;
     private final ArrayList<Ship> ships = new ArrayList<>();
 
-    public BGrid(boolean randomShips) {
+    public Grid(boolean randomShips) {
         cells = new Cell[GRID_SIZE][GRID_SIZE];
         initGrid();
         if (randomShips) {
@@ -23,10 +23,15 @@ class BGrid {
         }
     }
 
-    public BGrid() {
+    public Grid() {
         this(true);
     }
 
+    /**
+     * Loads ships from a CSV file.
+     * @param file A CSV file containing ship data.
+     * @return Whether the ships were successfully loaded or not.
+     */
     protected boolean loadShips(File file) {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
@@ -65,6 +70,10 @@ class BGrid {
         return true;
     }
 
+    /**
+     * Collates the current state of the grid into a string.
+     * @return A string representation of the grid.
+     */
     @Override
     public String toString(){
         StringBuilder output = new StringBuilder("\n");
@@ -97,6 +106,9 @@ class BGrid {
         return output.toString();
     }
 
+    /**
+     * Initialises the grid by creating all cells and placing them in an array.
+     */
     private void initGrid(){
         System.out.println("Creating the board...");
         for (int x = 0; x < GRID_SIZE; x++) {
@@ -106,10 +118,21 @@ class BGrid {
         }
     }
 
+    /**
+     * Returns a random index within the bounds of the grid.
+     * @return An integer between 0 and GRID_SIZE - 1, inclusive.
+     */
     private int randomIndex() {
         return (int)(Math.random() * GRID_SIZE);
     }
 
+    /**
+     * Checks if a ship horizontally bisects the prospective ship.
+     * @param x The x coordinate of the ship's start position.
+     * @param y The y coordinate of the ship's start position.
+     * @param size The size (type) of the ship.
+     * @return Whether the ship does not bisect any cells in the grid or not.
+     */
     private boolean noHorizontalBisections(int x, int y, int size) {
         for (int pointer = 0; pointer < size; pointer++) {
             int index = pointer + x;
@@ -121,6 +144,13 @@ class BGrid {
         return true;
     }
 
+    /**
+     * Checks if a ship vertically bisects the prospective ship.
+     * @param x The x coordinate of the ship's start position.
+     * @param y The y coordinate of the ship's start position.
+     * @param size The size (type) of the ship.
+     * @return Whether the ship does not bisect any cells in the grid or not.
+     */
     private boolean noVerticalBisections(int x, int y, int size) {
         for (int pointer = 0; pointer < size; pointer++) {
             int index = pointer + y;
@@ -131,6 +161,14 @@ class BGrid {
         return true;
     }
 
+    /**
+     * Checks if a ship can be placed at a given position and orientation.
+     * @param x The x coordinate of the ship's start position.
+     * @param y The y coordinate of the ship's start position.
+     * @param size The size (type) of the ship.
+     * @param horizontal Whether the ship is placed horizontally or not.
+     * @return Whether the placement is valid or not.
+     */
     private boolean isValidPlacement(int x, int y, int size, boolean horizontal) {
         // omits pos >= 0 check as both randomX and size never go below 0
         if (horizontal) {
@@ -205,18 +243,30 @@ class BGrid {
         return true;
     }
 
+    /**
+     * Attacks a cell in the grid.
+     * @param x The x coordinate of the cell to be attacked.
+     * @param y The y coordinate of the cell to be attacked.
+     * @return Whether a ship was hit or not.
+     */
     public boolean attackCell(int x, int y) {
         return cells[x][y].attack();
     }
 
     public int getSize() { return GRID_SIZE; }
 
+    /**
+     * Checks if a ship has been sunk at a given position.
+     * @param x The x coordinate of the cell to be checked.
+     * @param y The y coordinate of the cell to be checked.
+     * @return Whether the ship has been sunk or not.
+     */
     public Boolean isShipSunkAt(int x, int y) {
         Cell cell = cells[x][y];
         if (cell.hasShip()) {
             return cell.getShip().isSunk();
         }
-        // The ship is not present or did not sink
+        // A ship is not present or did not sink
         return false;
     }
 
