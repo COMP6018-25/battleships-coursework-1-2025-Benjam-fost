@@ -7,11 +7,12 @@ public class GUI extends JPanel{
     // Holds references to the button cells
     private final JButton[][] cellButtons;
     // Accounts for labels by being sized against the playable area, GRID_SIZE - 1
-    private final int GRID_SIZE = 11;
+    private final int GRID_SIZE;
 
 
-    public GUI(Controller controller) {
+    public GUI(Controller controller, int size) {
         super();
+        GRID_SIZE = size + 1;
         cellButtons = new JButton[GRID_SIZE - 1][GRID_SIZE - 1];
         initBoard(controller);
     }
@@ -72,10 +73,13 @@ public class GUI extends JPanel{
      * @param isHit Whether the cell has been hit or not.
      */
     public void updateCell(int x, int y, boolean isHit){
+        JButton cellButton = cellButtons[x][y];
         if (isHit) {
-            cellButtons[x][y].setText("H");
+            cellButton.setText("H");
+            cellButton.setBackground(Color.RED);
         } else {
-            cellButtons[x][y].setText("M");
+            cellButton.setText("M");
         }
+        cellButton.setEnabled(false);
     }
 }

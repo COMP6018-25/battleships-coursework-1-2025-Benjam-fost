@@ -1,4 +1,3 @@
-import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observable;
@@ -9,7 +8,6 @@ import java.util.Observer;
  * @author Ben
  */
 public class View extends JFrame implements Observer{
-    private final Controller controller;
     private final CardLayout cards;
     private final JPanel cardPanel;
     private final GUI gui;
@@ -22,12 +20,11 @@ public class View extends JFrame implements Observer{
      */
     public View(Model model, Controller controller) {
         super("Battleships");
-        this.controller = controller;
         cards = new CardLayout();
         // This panel holds the main menu and game view
         cardPanel = new JPanel(cards);
         // Holds the visual game grid
-        gui = new GUI(controller);
+        gui = new GUI(controller, model.getGrid().getSize());
         // Holds the main menu functionality
         menu = new Menu(controller);
         model.addObserver(this);
@@ -92,6 +89,7 @@ public class View extends JFrame implements Observer{
             if (success) {
                 cards.show(getContentPane(), "Game");
             } else {
+
                 JOptionPane.showMessageDialog(
                         this,
                         "Error loading file",

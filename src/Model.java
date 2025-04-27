@@ -66,6 +66,10 @@ public class Model extends Observable{
      * @param y The y coordinate of the cell to be attacked.
      */
     public void attack(int x, int y) {
+        assert x >= 0 && x < grid.getSize() : "x index out of bounds";
+        assert y >= 0 && y < grid.getSize() : "y index out of bounds";
+        // Invariant
+        assert shipsSunk <= 5 : "More ships sunk than expected!";
         // Checks if the cell has been hit already
         if (grid.isCellHit(x, y)) {
             System.out.println("You have already attacked this cell!");

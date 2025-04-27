@@ -114,7 +114,7 @@ public class CLI {
             // Checks if the game is won
             if (modelSunkShips == 5) {
                 running = false;
-                System.out.println("\n| | You win! | |\nAll ships sunk");
+                System.out.println("\n| | You win! | |\nAll ships sunk in " + model.getTries() + " tries");
             }
         }
     }

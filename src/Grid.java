@@ -1,5 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Stores game state and functionality related to the playable grid. Part of a composite Model. Co-manages game state with Cells.
@@ -33,6 +36,12 @@ class Grid {
      * @return Whether the ships were successfully loaded or not.
      */
     protected boolean loadShips(File file) {
+        assert file.exists() : "File does not exist!";
+
+        ships.clear();
+        initGrid();
+        List<Integer> sizes = new ArrayList<>();
+        List<Integer> expected = Arrays.asList(5, 4, 3, 2, 2);
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -48,6 +57,7 @@ class Grid {
 
                 // Parsing data
                 int size = Integer.parseInt(data[0]);
+                sizes.add(size);
                 int x = Integer.parseInt(data[1]);
                 int y = Integer.parseInt(data[2]);
                 boolean horizontal = data[3].equals("H");
@@ -59,6 +69,13 @@ class Grid {
                     return false;
                 }
             }
+            Collections.sort(sizes);
+            Collections.sort(expected);
+
+            if (!sizes.equals(expected)) {
+                System.out.println("| | Invalid fleet makeup! | |\nExpected 5 ships of sizes 5, 4, 3, 2, 2");
+                return false;
+            }
         } catch (FileNotFoundException e) {
             System.out.println("| | File not found! | |");
             return false;
@@ -66,7 +83,7 @@ class Grid {
             System.out.println("| | File read error! | |");
             return false;
         }
-
+        assert ships.size() == 5 : "| | Invalid fleet makeup | |\nExpected 5 ships but got " + ships.size() + "!";
         return true;
     }
 
@@ -110,7 +127,6 @@ class Grid {
      * Initialises the grid by creating all cells and placing them in an array.
      */
     private void initGrid(){
-        System.out.println("Creating the board...");
         for (int x = 0; x < GRID_SIZE; x++) {
             for (int y = 0; y < GRID_SIZE; y++) {
                 cells[x][y] = new Cell();
@@ -134,6 +150,10 @@ class Grid {
      * @return Whether the ship does not bisect any cells in the grid or not.
      */
     private boolean noHorizontalBisections(int x, int y, int size) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert size >= 2 && size <= 5 : "Invalid size: " + size + " for ship at (" + x + ", " + y + ")";
+
         for (int pointer = 0; pointer < size; pointer++) {
             int index = pointer + x;
             // If a ship bisects the chosen cells, re-select
@@ -152,6 +172,10 @@ class Grid {
      * @return Whether the ship does not bisect any cells in the grid or not.
      */
     private boolean noVerticalBisections(int x, int y, int size) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert size >= 2 && size <= 5 : "Invalid size: " + size + " for ship at (" + x + ", " + y + ")";
+
         for (int pointer = 0; pointer < size; pointer++) {
             int index = pointer + y;
             if (cells[x][index].hasShip()) {
@@ -170,10 +194,14 @@ class Grid {
      * @return Whether the placement is valid or not.
      */
     private boolean isValidPlacement(int x, int y, int size, boolean horizontal) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert size >= 2 && size <= 5 : "Invalid size: " + size + " for ship at (" + x + ", " + y + ")";
+
         // omits pos >= 0 check as both randomX and size never go below 0
         if (horizontal) {
             // If the ship can't fit, placement is invalid
-            if (!((x + size < GRID_SIZE) && (y < GRID_SIZE))) {
+            if (!(x + size < GRID_SIZE)) {
                 return false;
             } else {
                 // If the placement does not bisect another ship, the placement is valid
@@ -181,7 +209,7 @@ class Grid {
             }
         } else {
             // Identical logic but for the other axis
-            if (!((x < GRID_SIZE) && (y + size < GRID_SIZE))) {
+            if (!(y + size < GRID_SIZE)) {
                 return false;
             } else {
                 return noVerticalBisections(x, y, size);
@@ -193,12 +221,10 @@ class Grid {
      * Places ships at valid, random positions and orientations.
      */
     private void placeShips() {
+        assert ships.isEmpty() : "Ships array not empty!";
         // Creates and adds each Ship to Ships and grid cells
         int[] sizes = {5, 4, 3, 2, 2};
-        System.out.print("Placing ships");
         for (int size : sizes) {
-            System.out.print('.');
-
             Ship ship = new Ship(size);
             ships.add(ship);
             boolean horizontal = Math.random() > 0.5;
@@ -215,7 +241,7 @@ class Grid {
                 }
             }
         }
-        System.out.println();
+        assert ships.size() == 5 : "Ships array not filled correctly!";
     }
 
     /**
@@ -227,6 +253,12 @@ class Grid {
      * @return The success or failure of the operation
      */
     public boolean placeShip(int x, int y, Ship ship, boolean horizontal) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert ship != null : "Ship is null!";
+        assert ships.contains(ship) : "Ship is not in the ships array!";
+        assert ship.getSize() > 0 : "Invalid ship size: " + ship.getSize() + " for ship at (" + x + ", " + y + ")";
+
         int size = ship.getSize();
         // Checks if placement is valid before continuing
         if (!isValidPlacement(x, y, size, horizontal)) return false;
@@ -240,6 +272,7 @@ class Grid {
                 cells[x][y + pointer].setShip(ship);
             }
         }
+        assert cells[x][y].hasShip() : "Ship was not placed at (" + x + ", " + y + ")";
         return true;
     }
 
@@ -250,6 +283,10 @@ class Grid {
      * @return Whether a ship was hit or not.
      */
     public boolean attackCell(int x, int y) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert cells[x][y] != null : "Cell at (" + x + ", " + y + ") is null!";
+
         return cells[x][y].attack();
     }
 
@@ -262,15 +299,24 @@ class Grid {
      * @return Whether the ship has been sunk or not.
      */
     public Boolean isShipSunkAt(int x, int y) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert cells[x][y] != null : "Cell at (" + x + ", " + y + ") is null!";
+
         Cell cell = cells[x][y];
         if (cell.hasShip()) {
             return cell.getShip().isSunk();
         }
+        assert cell.getShip() == null : "Cell at (" + x + ", " + y + ") has a ship but the ship is null!";
         // A ship is not present or did not sink
         return false;
     }
 
     public Boolean isCellHit(int x, int y) {
+        assert x >= 0 && x < GRID_SIZE : "x index out of bounds";
+        assert y >= 0 && y < GRID_SIZE : "y index out of bounds";
+        assert cells[x][y] != null : "Cell at (" + x + ", " + y + ") is null!";
+
         return cells[x][y].isHit();
     }
 }
