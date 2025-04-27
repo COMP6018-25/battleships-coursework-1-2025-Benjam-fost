@@ -79,6 +79,7 @@ public class View extends JFrame implements Observer{
                 );
             }
         } else if (arg instanceof Model.GameEndUpdate(int tries)) {
+            gui.disableCells();
             JOptionPane.showMessageDialog(
                     this,
                     "You sank all the ships after " + tries + " tries!",

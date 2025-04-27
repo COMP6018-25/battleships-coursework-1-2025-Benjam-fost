@@ -82,4 +82,12 @@ public class GUI extends JPanel{
         }
         cellButton.setEnabled(false);
     }
+
+    public void disableCells() {
+        for (int x = 0; x < GRID_SIZE - 1; x++) {
+            for (int y = 0; y < GRID_SIZE - 1; y++) {
+                cellButtons[x][y].setEnabled(false);
+            }
+        }
+    }
 }

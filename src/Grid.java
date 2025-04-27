@@ -26,10 +26,6 @@ class Grid {
         }
     }
 
-    public Grid() {
-        this(true);
-    }
-
     /**
      * Loads ships from a CSV file.
      * @param file A CSV file containing ship data.
