@@ -13,6 +13,7 @@ public class Ship {
 
     // Increments hits and sends updates when a ship sinks; it is only called when a new cell is struck.
     public void hit() {
+        assert hits < size : "Ship hit more times than expected!";
         hits++;
     }
 

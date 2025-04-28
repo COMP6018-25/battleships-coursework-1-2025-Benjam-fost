@@ -16,6 +16,7 @@ public class Cell {
     }
 
     public void setShip(Ship ship) {
+        assert this.ship == null && ship != null : "Ship size mismatch";
         this.ship = ship;
     }
 
