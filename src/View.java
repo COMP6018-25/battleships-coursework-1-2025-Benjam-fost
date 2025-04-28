@@ -37,17 +37,11 @@ public class View extends JFrame implements Observer{
     private void initGUI(){
         // Halts the program when the JFrame is closed
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        // Composes the stages of the GUI
         cardPanel.add(menu, "Menu");
         cardPanel.add(gui, "Game");
         setContentPane(cardPanel);
 
-        // Creates the grid layout
-        /*Container contentPane = this.getContentPane();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
-        // Creates the content of the panel
-        contentPane.add(createGridPanel());
-        */
         // handles sizing
         this.pack();
         this.setResizable(false);
@@ -57,7 +51,7 @@ public class View extends JFrame implements Observer{
         this.toFront();
         this.requestFocus();
         this.setAlwaysOnTop(true);
-
+        // Opens the main menu on start
         cards.show(cardPanel, "Menu");
     }
 
@@ -68,40 +62,41 @@ public class View extends JFrame implements Observer{
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof Model.CellUpdate update) {
-            gui.updateCell(update.x(), update.y(), update.isHit());
-            if (update.isShipSunk()) {
+        switch (arg) {
+            case Model.CellUpdate update -> {
+                gui.updateCell(update.x(), update.y(), update.isHit());
+                if (update.isShipSunk()) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Ship sunk!",
+                            "Attack result",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+            }
+            case Model.GameEndUpdate(int tries) -> {
+                gui.disableCells();
                 JOptionPane.showMessageDialog(
                         this,
-                        "Ship sunk!",
-                        "Attack result",
+                        "You sank all the ships after " + tries + " tries!",
+                        "You win",
                         JOptionPane.INFORMATION_MESSAGE
                 );
             }
-        } else if (arg instanceof Model.GameEndUpdate(int tries)) {
-            gui.disableCells();
-            JOptionPane.showMessageDialog(
-                    this,
-                    "You sank all the ships after " + tries + " tries!",
-                    "You win",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        } else if (arg instanceof Model.GameLoadUpdate(boolean success)) {
-            if (success) {
-                cards.show(getContentPane(), "Game");
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Error loading file",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+            case Model.GameLoadUpdate(boolean success) -> {
+                if (success) {
+                    cards.show(getContentPane(), "Game");
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Error loading file",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
             }
-        } else if (arg instanceof Model.GameStartUpdate) {
-            cards.show(getContentPane(), "Game");
-        } else {
-            System.out.println("ERROR | Unexpected arg: " + arg);
+            case Model.GameStartUpdate gameStartUpdate -> cards.show(getContentPane(), "Game");
+            case null, default -> System.out.println("ERROR | Unexpected arg: " + arg);
         }
     }
 }
