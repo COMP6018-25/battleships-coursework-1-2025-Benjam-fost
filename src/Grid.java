@@ -8,7 +8,7 @@ import java.util.List;
  * Stores game state and functionality related to the playable grid. Part of a composite Model. Co-manages game state with Cells.
  * @author Ben
  */
-class Grid {
+public class Grid {
     /*
     Defines the size of the play area
     1 column and row is reserved for column headers
@@ -32,8 +32,6 @@ class Grid {
      * @return Whether the ships were successfully loaded or not.
      */
     protected boolean loadShips(File file) {
-        assert file.exists() : "File does not exist!";
-
         ships.clear();
         initGrid();
         List<Integer> sizes = new ArrayList<>();
@@ -160,7 +158,7 @@ class Grid {
         return true;
     }
 
-    /**
+    /***
      * Checks if a ship vertically bisects the prospective ship.
      * @param x The x coordinate of the ship's start position.
      * @param y The y coordinate of the ship's start position.
